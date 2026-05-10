@@ -8,7 +8,7 @@ export const fetchQuestions = async () => {
         const data = await response.json();
         
         return data.map(q => ({
-            question: q.question.text, 
+            question: q.question, 
             options: [...q.incorrectAnswers, q.correctAnswer].sort(() => Math.random() - 0.5),
             answer: q.correctAnswer
         }));
