@@ -5,6 +5,6 @@ var dbConnect = require("./config/db");
 
 dbConnect();
 
-app.listen(process.env.PORT || 3000, () => {
+app.listen(process.env.PORT || 4500, () => {
   console.log("server running on " + process.env.PORT);
 });
