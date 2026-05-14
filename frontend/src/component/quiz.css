@@ -1,0 +1,284 @@
+/* Quiz Background */
+.quiz-bg{
+  background: #fff7fc;
+  min-height: 100vh;
+}
+
+.quiz-card{
+  background: transparent;
+  width: 100%;
+  max-width: 700px;
+  padding: 40px;
+  border-radius: 35px;
+  /* box-shadow: 0 10px 40px rgba(0,0,0,0.08); */
+}
+
+.title{
+  text-align: center;
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: #9b5de5;
+  font-family: 'Dancing Script', cursive;
+}
+
+.subtitle{
+  text-align: center;
+  color: gray;
+  margin-bottom: 30px;
+}
+
+.difficulty-buttons{
+  display: flex;
+  gap: 25px;
+  justify-content: center;
+  margin-bottom: 30px;
+  margin-top: 20px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.level-btn{
+  border-radius: 50px;
+  padding: 10px 25px;
+  background: #f5f5f5;
+  border: none;
+  transition: 0.3s;
+}
+
+.level-btn:hover{
+  background: #f3d9fa !important;
+  transform: translateY(-2px);
+  border-radius: 15px;
+}
+
+.active-easy{
+  background: #d8f3dc;
+}
+
+.active-medium{
+  background: #ffe8a1;
+}
+
+.active-hard{
+  background: #ffccd5;
+}
+
+.start-btn{
+  width: 100%;
+  padding: 15px;
+  border-radius: 20px;
+  background-color: #c77dff !important;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.start-btn:hover{
+  transform: scale(1.02);
+}
+
+/* question card */
+
+.top-bar{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  color: #914ff5;
+  font-weight: bold;
+}
+
+.question-count{
+  color: #914ff5;
+  font-weight: bold;
+}
+
+.question-title{
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 20px 0;
+  font-family: 'Outfit', sans-serif;
+}
+
+.option-btn{
+  width: 100%;
+  padding: 18px;
+  margin-bottom: 15px;
+  border-radius: 20px;
+  border: 2px solid #914ff5 !important ;
+  border-color: #914ff5 !important;
+  background: rgba(241, 225, 245, 0.5);
+  text-align: left;
+  transition: 0.3s;
+  font-weight: 500;
+  font-family: 'Outfit', sans-serif;
+}
+
+.option-btn:hover{
+  background: #f3d9fa;
+  transform: translateY(-2px);
+}
+
+.loading-screen{
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff7fc;
+  color: #9b5de5;
+}
+/* Result Page */
+
+.result-emoji{
+  font-size: 5rem;
+  margin-bottom: 20px;
+}
+
+.result-title{
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #9b5de5;
+}
+
+.result-subtitle{
+  color: gray;
+  margin-bottom: 30px;
+}
+
+.score-card{
+  background: #fff0f6;
+  border: 2px solid #914ff5;
+  border-radius: 30px;
+  padding: 40px;
+  margin-bottom: 30px;
+}
+
+.score-card h1{
+  font-size: 4rem;
+  color: #ff66a3;
+  font-weight: bold;
+}
+
+.score-card p{
+  color: #9b5de5;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+.submit-btn{
+  background-color: #c77dff !important;
+  color: white;
+  padding: 15px;
+  border-radius: 20px;
+  border: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.submit-btn:hover{
+  opacity: 0.95;
+}
+
+.submitted-btn{
+  background-color: #b7efc5 !important;
+  color: #2d6a4f !important;
+}
+
+.restart-btn{
+  background: white;
+  border: 2px solid #f3d9fa;
+  color: #9b5de5;
+  padding: 15px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.restart-btn:hover{
+  background: #fff0f6;
+}
+
+/* Category Grid */
+
+.category-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 220px);
+  justify-content: center;
+  gap: 20px;
+}
+
+.category-box{
+  background: #fff0f6;
+  border: 2px solid #f3d9fa;
+  padding: 40px;
+  border-radius: 25px;
+  text-align: center;
+  font-weight: bold;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: 'Outfit', sans-serif;
+  color: #9b5de5;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* hover ONLY when not active */
+.category-box:hover:not(.active-category) {
+  transform: translateY(-3px);
+  background: #f3d9fa;
+}
+
+/* active state stays locked in */
+.category-box.active-category {
+  background: #ff8fffb3;
+  color: white;
+  transform: translateY(-3px); /* keeps lifted look */
+}
+
+/* icon styling stays consistent */
+.category-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: #9b5de5;
+}
+
+/* make icon change when active */
+.category-box.active-category .category-icon {
+  color: white;
+}
+
+/* navigation buttons */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.nav-buttons button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: #c77dff;
+  color: white;
+  transition: 0.2s ease;
+}
+
+.nav-buttons button:hover {
+  transform: scale(1.05);
+}
+
+.nav-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Level Complete Screen */
+.level-complete-screen {
+  text-align: center;
+  padding: 40px;
+  animation: pop 0.4s ease;
+}
+
+@keyframes pop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

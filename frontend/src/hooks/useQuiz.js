@@ -13,14 +13,28 @@ export const useQuiz = (
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const [currentDifficulty, setCurrentDifficulty] = useState(initialDifficulty || "easy");
 
-  const loadQuizData = async (cat, diff) => {
+  const [levelComplete, setLevelComplete] = useState(false);
+  const [levelStatus, setLevelStatus] = useState(null);
+  const [levelMessage, setLevelMessage] = useState("");
+
+  //loading questions
+  const loadQuizData = async (cat, diff, keepScore = false) => {
     setLoading(true);
     try {
       const data = await fetchQuestions(cat, diff);
+
       setQuestions(data);
       setCurrentIndex(0);
+
+      setShowResult(false);
+
+      setLevelComplete(false);
+      setLevelStatus(null);
+      setLevelMessage("");
+      
     } catch (error) {
       console.error("Quiz load error:", error);
     } finally {
@@ -28,6 +42,7 @@ export const useQuiz = (
     }
   };
 
+  // start quiz when category is selected
   useEffect(() => {
     if (startQuiz && category) {
       setCurrentDifficulty(initialDifficulty);
@@ -42,6 +57,7 @@ export const useQuiz = (
     loadQuizData(category, currentDifficulty);
   };
 
+  // Handle answer selection and quiz progression
   const handleAnswer = (selectedOption) => {
     const isCorrect = selectedOption === questions[currentIndex].answer;
     const newScore = isCorrect ? score + 1 : score;
@@ -59,37 +75,57 @@ export const useQuiz = (
 
       if (currentDifficulty === "easy") {
         if (newScore >= 3) {
-          alert(`✅ Level 1 Passed! Moving to Medium...`);
+          alert("try medium");
+            setLevelStatus("passed");
+            setLevelMessage("Easy completed!");
+            setLevelComplete(true);
           setUnlockedLevels((prev) => ({ ...prev, medium: true }));
           setCurrentDifficulty("medium");
           loadQuizData(category, "medium");
         } else {
-          alert("❌ Level 1 Failed. Try Easy again!");
           resetCurrentLevel(0); // Restart Easy from 0
+          alert("try again");
+            setLevelStatus("failed");
+            setLevelMessage("Try again, you’re close!");
+            setLevelComplete(true);
+
         }
       } 
       else if (currentDifficulty === "medium") {
         if (newScore >= 7) {
-          alert(`✅ Level 2 Passed! Moving to HARD...`);
+          alert("try hard");
+            setLevelStatus("passed");
+            setLevelMessage("Medium completed!");
+            setLevelComplete(true);
           setUnlockedLevels((prev) => ({ ...prev, hard: true }));
           setCurrentDifficulty("hard");
-          loadQuizData(category, "hard");
+          loadQuizData(category, "hard", true); // Keep score for hard level
         } else {
-          alert("❌ Level 2 Failed. Try Medium again!");
+          alert("try again"); 
+          setLevelStatus("failed");
+          setLevelMessage("Try again, you’re close!");
+          setLevelComplete(true);
           resetCurrentLevel(score - (currentIndex)); // Keeps the score from Level 1, resets Level 2
         }
       } 
       else if (currentDifficulty === "hard") {
         if (newScore >= 12) {
-           alert("🎊 CONGRATULATIONS! You have mastered all 3 levels!");
-           setShowResult(true);
+          alert("congrats you completed the quiz");
+          setLevelStatus("passed");
+          setLevelMessage("Hard completed!");
+          setLevelComplete(true);
+          setShowResult(true);
         } else {
-          alert("❌ Level 3 Failed. Try Hard again!");
+          alert("try again");
+          setLevelStatus("failed");
+          setLevelMessage("Try again, you’re close!");
+          setLevelComplete(true); 
           resetCurrentLevel(score - (currentIndex)); 
         }
       }
     }
   };
+
 
   const restartQuiz = () => {
     setCurrentIndex(0);
@@ -107,6 +143,9 @@ export const useQuiz = (
     loading,
     handleAnswer,
     restartQuiz,
+    levelComplete,
+    levelStatus,
+    levelMessage,
     currentDifficulty,
   };
 };

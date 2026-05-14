@@ -2,5 +2,25 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.3.0",
     "tailwindcss": "^4.3.0"
-  }
+  },
+  "name": "synapse",
+  "version": "1.0.0",
+  "description": "\"# Synapse Project\"",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laharilakkasani/synapse.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/laharilakkasani/synapse/issues"
+  },
+  "homepage": "https://github.com/laharilakkasani/synapse#readme"
 }

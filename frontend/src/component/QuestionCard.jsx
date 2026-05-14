@@ -1,4 +1,5 @@
 import React from 'react';
+import "./quiz.css";
 
 /**
  * QuestionCard displays the current question and its multiple-choice options.
@@ -6,36 +7,47 @@ import React from 'react';
  * @param {function} choice - The function to call when an option is clicked.
  * @param {number} index - The current question number.
  * @param {number} total - The total number of questions.
+ * @param {function} onPrev - The function to call when the previous button is clicked.
+ * @param {function} onNext - The function to call when the next button is clicked.
  */
-const QuestionCard = ({ data, choice, index, total }) => {
+const QuestionCard = ({ data, choice, index, total, onPrev, onNext }) => {
   // Guard clause: If data isn't loaded yet, return null or a placeholder
   if (!data) return null;
 
   return (
-    <div className="animate-fade-in">
-      {/* Question Header */}
-      <span className="text-xs font-bold text-blue-500 uppercase tracking-widest">
-        {index} of {total} questions
-      </span>
-      
-      <h2 className="text-2xl font-bold text-slate-800 mt-2 mb-8">
+    <div>
+
+      <p className="question-count">
+        {index} of {total} Questions
+      </p>
+
+      <h2 className="question-title">
         {data.question}
       </h2>
 
-      {/* Options List */}
-      <div className="flex flex-col gap-4">
+      <div>
+
         {data.options.map((option, i) => (
           <button
             key={i}
-            onClick={() => choice(option)} // Fixed: Changed 'onAnswer' to 'choice' to match props
-            className="w-full text-left p-6 rounded-xl border-2 border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 group"
+            onClick={() => choice(option)}
+            className="option-btn"
           >
-            <span className="font-medium text-slate-700 group-hover:text-blue-700">
-              {option}
-            </span>
+            {option}
           </button>
         ))}
+
+        <div className="nav-buttons">
+          <button onClick={onPrev} disabled={index === 0}>
+            Previous
+          </button>
+
+          <button onClick={onNext} disabled={index === total - 1}>
+            Next
+          </button>
+        </div>
       </div>
+
     </div>
   );
 };
