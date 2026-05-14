@@ -21,7 +21,7 @@ const getQuizQuestions = async (req, res) => {
     console.log(
       "Quiz questions fetched successfully"
     );
-
+    console.log(data);
     res.json(data);
 
   } catch (error) {

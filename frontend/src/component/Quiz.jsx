@@ -3,6 +3,8 @@ import QuestionCard from "./QuestionCard";
 import Result from "./Result";
 import ProgressBar from "./ProgressBar";
 import { useQuiz } from "../hooks/useQuiz";
+import LevelComplete from "./LevelComplete";
+import LevelFailed from "./LevelFailed";
 
 const Quiz = () => {
   const [category, setCategory] = useState("");
@@ -23,6 +25,13 @@ const Quiz = () => {
     handleAnswer,
     restartQuiz,
     currentDifficulty, 
+    moveToNextLevel,
+    showLevelComplete,
+    showLevelFailed,
+    retryLevel,
+    selectedAnswer,
+    isAnswered,
+    handleNextQuestion
   } = useQuiz(
     category,
     difficulty,
@@ -84,7 +93,21 @@ const Quiz = () => {
               Start Quiz
             </button>
           </div>
-        ) : showResult ? (
+        ) :  showLevelComplete ? (
+
+          <LevelComplete
+            currentDifficulty={currentDifficulty}
+            onNextLevel={moveToNextLevel}
+          />
+
+        ) : showLevelFailed ? (
+
+          <LevelFailed
+            currentDifficulty={currentDifficulty}
+            onRetry={retryLevel}
+          />
+
+        ) :showResult ? (
           <Result
             score={score}
             // If they finished hard, they did 15 questions total
@@ -115,6 +138,9 @@ const Quiz = () => {
               index={currentIndex + 1}
               total={5}
               choice={handleAnswer}
+              selectedAnswer={selectedAnswer}
+              isAnswered={isAnswered}
+              onNext={handleNextQuestion}
             />
           </>
         )}

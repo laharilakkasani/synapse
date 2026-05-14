@@ -53,8 +53,8 @@ const Result = ({
 
       <p className="text-slate-500 mt-2 mb-6 font-medium">
         {passed
-          ? "Next level unlocked 🚀"
-          : "Try again to unlock next level"}
+          ? "Congratulations! 🚀"
+          : "Try again"}
       </p>
 
       {/* SCORE CARD */}
