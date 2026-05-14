@@ -2,7 +2,11 @@
 import Quiz from "./component/Quiz";
 
 function App() {
-  return <Quiz />;
+  
+  return (
+
+      <Quiz />
+  );
 }
 
 export default App;
