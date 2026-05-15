@@ -4,11 +4,12 @@ import Result from "./Result";
 import ProgressBar from "./ProgressBar";
 import { useQuiz } from "../hooks/useQuiz";
 import LevelFailed from "./LevelFailed";
+import LevelComplete from "./LevelComplete";
+import "./quiz.css";
 
 const Quiz = () => {
   const [category, setCategory] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
-
   const [unlockedLevels, setUnlockedLevels] = useState({
     easy: true,
     medium: false,
@@ -16,6 +17,15 @@ const Quiz = () => {
   });
 
   const [startQuiz, setStartQuiz] = useState(false);
+
+  const categories = [
+    { name: "science", icon: "bi bi-flask" },
+    { name: "history", icon: "bi bi-bank" },
+    { name: "music", icon: "bi bi-music-note-beamed" },
+    { name: "geography", icon: "bi bi-globe" },
+    { name: "film_and_tv", icon: "bi bi-camera-reels" },
+    { name: "general_knowledge", icon: "bi bi-lightbulb" },
+  ];
 
   const {
     questions,
@@ -41,15 +51,6 @@ const Quiz = () => {
     setUnlockedLevels
   );
 
-  const categories = [
-    { name: "science", icon: "bi bi-flask" },
-    { name: "history", icon: "bi bi-bank" },
-    { name: "music", icon: "bi bi-music-note-beamed" },
-    { name: "geography", icon: "bi bi-globe" },
-    { name: "film_and_tv", icon: "bi bi-camera-reels" },
-    { name: "general_knowledge", icon: "bi bi-lightbulb" },
-  ];
-
   /* LOADING */
   if (loading) {
     return (
@@ -62,19 +63,20 @@ const Quiz = () => {
   /* LEVEL COMPLETE */
   if (showLevelComplete) {
     return (
-      <div className="level-complete-screen">
-        <h1>
-          {currentDifficulty.toUpperCase()} Level Complete 🎉
-        </h1>
+      <LevelComplete
+        currentDifficulty={currentDifficulty}
+        onContinue={moveToNextLevel}
+      />
+    );
+  }
 
-        <p>
-          Great job! You cleared this level.
-        </p>
-
-        <button className="start-btn" onClick={moveToNextLevel}>
-          Continue →
-        </button>
-      </div>
+  /* LEVEL FAILED */
+  if (showLevelFailed) {
+    return (
+      <LevelFailed 
+        currentDifficulty={currentDifficulty}
+        onRetry={retryLevel} 
+      />
     );
   }
 
@@ -83,14 +85,8 @@ const Quiz = () => {
     return (
       <Result
         score={score}
-        total={
-          currentDifficulty === "hard"
-            ? 15
-            : currentDifficulty === "medium"
-            ? 10
-            : 5
-        }
-        passed={score >= 12}
+        total={30} // Cumulative aggregate maximum score across all levels
+        passed={score >= 20} 
         onRestart={() => {
           setStartQuiz(false);
           restartQuiz();
@@ -101,16 +97,9 @@ const Quiz = () => {
 
   const currentQuestion = questions?.[currentIndex];
 
-  //level failed component
-  if (showLevelFailed) {
-    return <LevelFailed nRetry={retryLevel}  />;
-  }
-
   return (
     <div className="quiz-bg">
-
       <div className="container d-flex justify-content-center align-items-center min-vh-100">
-
         <div className="quiz-card">
 
           {/* START SCREEN */}
@@ -122,9 +111,7 @@ const Quiz = () => {
                 Choose category and difficulty
               </p>
 
-              {/* CATEGORY GRID */}
               <div className="category-grid">
-
                 {categories.map((cat) => (
                   <div
                     key={cat.name}
@@ -137,12 +124,9 @@ const Quiz = () => {
                     <p>{cat.name.replaceAll("_", " ")}</p>
                   </div>
                 ))}
-
               </div>
 
-              {/* DIFFICULTY */}
               <div className="difficulty-buttons">
-
                 <button
                   className={`level-btn ${
                     difficulty === "easy" ? "active-easy" : ""
@@ -171,7 +155,6 @@ const Quiz = () => {
                 >
                   Hard
                 </button>
-
               </div>
 
               <button
@@ -184,23 +167,19 @@ const Quiz = () => {
               >
                 Start Quiz →
               </button>
-
             </>
           ) : (
             <>
-              {/* TOP BAR */}
               <div className="top-bar">
-                <span>Level: {currentDifficulty}</span>
-                <span>Score: {score}</span>
+                <span>Level: {currentDifficulty.toUpperCase()}</span>
+                <span>Total Score: {score}</span>
               </div>
 
-              {/* PROGRESS */}
               <ProgressBar
                 current={currentIndex + 1}
                 total={questions.length}
               />
 
-              {/* QUESTION */}
               <QuestionCard
                 data={questions[currentIndex]}
                 index={currentIndex + 1}
@@ -215,9 +194,7 @@ const Quiz = () => {
           )}
 
         </div>
-
       </div>
-
     </div>
   );
 };

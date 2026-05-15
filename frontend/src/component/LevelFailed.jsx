@@ -1,25 +1,27 @@
+import React from "react";
+
 const LevelFailed = ({
-  currentDifficulty,
+  currentDifficulty = "easy",
   onRetry,
 }) => {
   return (
     <div className="text-center">
 
-      <div className="bg-red-100 w-32 h-32 mx-auto rounded-full flex items-center justify-center text-6xl">
+      <div className="card">
         ❌
       </div>
 
-      <h1 className="text-3xl font-bold mt-6 text-slate-800">
+      <h1 className="level-title">
         {currentDifficulty.toUpperCase()} Level Failed
       </h1>
 
-      <p className="text-slate-500 mt-2">
+      <p className="sub-statement">
         Try again to clear this level.
       </p>
 
       <button
         onClick={onRetry}
-        className="mt-6 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl font-semibold"
+        className="continue-btn"
       >
         Try Again
       </button>

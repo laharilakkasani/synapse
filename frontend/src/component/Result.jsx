@@ -49,7 +49,7 @@ const Result = ({
 
   return (
 
-    <div className="text-center">
+    <div className="result-container">
 
       <div className="result-emoji">
         {passed ? "🎉" : "💔"}
