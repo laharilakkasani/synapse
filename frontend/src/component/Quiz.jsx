@@ -3,17 +3,18 @@ import QuestionCard from "./QuestionCard";
 import Result from "./Result";
 import ProgressBar from "./ProgressBar";
 import { useQuiz } from "../hooks/useQuiz";
-import LevelComplete from "./LevelComplete";
 import LevelFailed from "./LevelFailed";
 
 const Quiz = () => {
   const [category, setCategory] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
+
   const [unlockedLevels, setUnlockedLevels] = useState({
     easy: true,
     medium: false,
     hard: false,
   });
+
   const [startQuiz, setStartQuiz] = useState(false);
 
   const {
@@ -23,15 +24,15 @@ const Quiz = () => {
     showResult,
     loading,
     handleAnswer,
+    handleNextQuestion,
     restartQuiz,
-    currentDifficulty, 
-    moveToNextLevel,
+    currentDifficulty,
     showLevelComplete,
     showLevelFailed,
+    moveToNextLevel,
     retryLevel,
     selectedAnswer,
     isAnswered,
-    handleNextQuestion
   } = useQuiz(
     category,
     difficulty,
@@ -40,111 +41,183 @@ const Quiz = () => {
     setUnlockedLevels
   );
 
+  const categories = [
+    { name: "science", icon: "bi bi-flask" },
+    { name: "history", icon: "bi bi-bank" },
+    { name: "music", icon: "bi bi-music-note-beamed" },
+    { name: "geography", icon: "bi bi-globe" },
+    { name: "film_and_tv", icon: "bi bi-camera-reels" },
+    { name: "general_knowledge", icon: "bi bi-lightbulb" },
+  ];
+
+  /* LOADING */
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-100">
-        <div className="text-xl font-bold text-blue-600 animate-pulse">
-          Loading {currentDifficulty} Level...
-        </div>
+      <div className="loading-screen">
+        <h1>Loading Quiz...</h1>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+  /* LEVEL COMPLETE */
+  if (showLevelComplete) {
+    return (
+      <div className="level-complete-screen">
+        <h1>
+          {currentDifficulty.toUpperCase()} Level Complete 🎉
+        </h1>
 
-        {!startQuiz ? (
-          <div className="flex flex-col gap-4">
-            <h1 className="text-2xl font-bold text-center">Select Category</h1>
+        <p>
+          Great job! You cleared this level.
+        </p>
 
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="border p-3 rounded-lg"
-            >
-              <option value="">Choose Category</option>
-              <option value="science">Science</option>
-              <option value="history">History</option>
-              <option value="music">Music</option>
-              <option value="geography">Geography</option>
-              <option value="film_and_tv">Film & TV</option>
-              <option value="society_and_culture">Society & Culture</option>
-              <option value="food_and_drink">Food & Drink</option>
-              <option value="general_knowledge">General Knowledge</option>
-              <option value="arts_and_literature">Arts & Literature</option>
-              <option value="sport_and_leisure">Sports</option>
-            </select>
-
-            <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              className="border p-3 rounded-lg"
-            >
-              <option value="easy">Easy</option>
-              <option value="medium" disabled={!unlockedLevels.medium}>Medium {unlockedLevels.medium ? '🔓' : '🔒'}</option>
-              <option value="hard" disabled={!unlockedLevels.hard}>Hard {unlockedLevels.hard ? '🔓' : '🔒'}</option>
-            </select>
-
-            <button
-              onClick={() => category ? setStartQuiz(true) : alert("Please select a category")}
-              className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
-            >
-              Start Quiz
-            </button>
-          </div>
-        ) :  showLevelComplete ? (
-
-          <LevelComplete
-            currentDifficulty={currentDifficulty}
-            onNextLevel={moveToNextLevel}
-          />
-
-        ) : showLevelFailed ? (
-
-          <LevelFailed
-            currentDifficulty={currentDifficulty}
-            onRetry={retryLevel}
-          />
-
-        ) :showResult ? (
-          <Result
-            score={score}
-            // If they finished hard, they did 15 questions total
-            total={currentDifficulty === 'hard' ? 15 : currentDifficulty === 'medium' ? 10 : 5}
-            // Passing threshold for the whole game
-            passed={score >= 12} 
-            onRestart={() => {
-                setStartQuiz(false); 
-                restartQuiz();
-            }}
-          />
-        ) : (
-          <>
-            <div className="flex justify-between items-center mb-4">
-               <span className="text-sm font-semibold uppercase tracking-wider text-blue-500">
-                 Current Level: {currentDifficulty}
-               </span>
-               <span className="text-sm text-gray-500 font-bold">Total Score: {score}</span>
-            </div>
-
-            <ProgressBar
-              current={currentIndex + 1}
-              total={5} 
-            />
-
-            <QuestionCard
-              data={questions[currentIndex]}
-              index={currentIndex + 1}
-              total={5}
-              choice={handleAnswer}
-              selectedAnswer={selectedAnswer}
-              isAnswered={isAnswered}
-              onNext={handleNextQuestion}
-            />
-          </>
-        )}
+        <button className="start-btn" onClick={moveToNextLevel}>
+          Continue →
+        </button>
       </div>
+    );
+  }
+
+  /* RESULT */
+  if (showResult) {
+    return (
+      <Result
+        score={score}
+        total={
+          currentDifficulty === "hard"
+            ? 15
+            : currentDifficulty === "medium"
+            ? 10
+            : 5
+        }
+        passed={score >= 12}
+        onRestart={() => {
+          setStartQuiz(false);
+          restartQuiz();
+        }}
+      />
+    );
+  }
+
+  const currentQuestion = questions?.[currentIndex];
+
+  //level failed component
+  if (showLevelFailed) {
+    return <LevelFailed nRetry={retryLevel}  />;
+  }
+
+  return (
+    <div className="quiz-bg">
+
+      <div className="container d-flex justify-content-center align-items-center min-vh-100">
+
+        <div className="quiz-card">
+
+          {/* START SCREEN */}
+          {!startQuiz ? (
+            <>
+              <h1 className="title">Synapse</h1>
+
+              <p className="subtitle">
+                Choose category and difficulty
+              </p>
+
+              {/* CATEGORY GRID */}
+              <div className="category-grid">
+
+                {categories.map((cat) => (
+                  <div
+                    key={cat.name}
+                    className={`category-box ${
+                      category === cat.name ? "active-category" : ""
+                    }`}
+                    onClick={() => setCategory(cat.name)}
+                  >
+                    <i className={`${cat.icon} category-icon`} />
+                    <p>{cat.name.replaceAll("_", " ")}</p>
+                  </div>
+                ))}
+
+              </div>
+
+              {/* DIFFICULTY */}
+              <div className="difficulty-buttons">
+
+                <button
+                  className={`level-btn ${
+                    difficulty === "easy" ? "active-easy" : ""
+                  }`}
+                  onClick={() => setDifficulty("easy")}
+                >
+                  Easy
+                </button>
+
+                <button
+                  className={`level-btn ${
+                    difficulty === "medium" ? "active-medium" : ""
+                  }`}
+                  disabled={!unlockedLevels.medium}
+                  onClick={() => setDifficulty("medium")}
+                >
+                  Medium
+                </button>
+
+                <button
+                  className={`level-btn ${
+                    difficulty === "hard" ? "active-hard" : ""
+                  }`}
+                  disabled={!unlockedLevels.hard}
+                  onClick={() => setDifficulty("hard")}
+                >
+                  Hard
+                </button>
+
+              </div>
+
+              <button
+                className="start-btn"
+                onClick={() =>
+                  category
+                    ? setStartQuiz(true)
+                    : alert("Select category first")
+                }
+              >
+                Start Quiz →
+              </button>
+
+            </>
+          ) : (
+            <>
+              {/* TOP BAR */}
+              <div className="top-bar">
+                <span>Level: {currentDifficulty}</span>
+                <span>Score: {score}</span>
+              </div>
+
+              {/* PROGRESS */}
+              <ProgressBar
+                current={currentIndex + 1}
+                total={questions.length}
+              />
+
+              {/* QUESTION */}
+              <QuestionCard
+                data={questions[currentIndex]}
+                index={currentIndex + 1}
+                total={questions.length}
+                choice={handleAnswer}
+                onNext={handleNextQuestion}
+                correctAnswer={currentQuestion?.answer}
+                isAnswered={isAnswered}
+                selectedOption={selectedAnswer}
+              />
+            </>
+          )}
+
+        </div>
+
+      </div>
+
     </div>
   );
 };

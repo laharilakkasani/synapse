@@ -15,7 +15,7 @@ export const useQuiz = (
   const [loading, setLoading] = useState(false);
   const [currentDifficulty, setCurrentDifficulty] = useState(initialDifficulty || "easy");
   const [showLevelComplete, setShowLevelComplete] = useState(false);
-  const [showLevelFailed,setShowLevelFailed] = useState(false);
+  const [showLevelFailed, setShowLevelFailed] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
 
@@ -23,10 +23,14 @@ export const useQuiz = (
     setLoading(true);
     try {
       const data = await fetchQuestions(cat, diff);
-      setQuestions(data);
+      setQuestions(data || []);
       setCurrentIndex(0);
+      setScore(0);
+      setSelectedAnswer(null);
+      setIsAnswered(false);
     } catch (error) {
       console.error("Quiz load error:", error);
+      setQuestions([]);
     } finally {
       setLoading(false);
     }
@@ -39,146 +43,90 @@ export const useQuiz = (
     }
   }, [startQuiz, category, initialDifficulty]);
 
-  // Helper to retry the same level if failed
-  const resetCurrentLevel = (levelStartScore) => {
-    setScore(levelStartScore);
-    setCurrentIndex(0);
-    loadQuizData(category, currentDifficulty);
-  };
-
   const handleAnswer = (selectedOption) => {
-
-    // PREVENT MULTIPLE CLICKS
     if (isAnswered) return;
 
     setSelectedAnswer(selectedOption);
-
     setIsAnswered(true);
 
+    const currentQuestion = questions[currentIndex];
     const isCorrect =
-      selectedOption === questions[currentIndex].answer;
+      selectedOption === currentQuestion?.answer;
 
     if (isCorrect) {
       setScore((prev) => prev + 1);
     }
   };
 
-
   const handleNextQuestion = () => {
+    if (!questions.length) return;
 
-    const nextQuestion = currentIndex + 1;
+    const isLastQuestion = currentIndex === questions.length - 1;
 
-    // RESET STATES
     setSelectedAnswer(null);
-
     setIsAnswered(false);
 
-    // NEXT QUESTION
-    if (nextQuestion < questions.length) {
-
-      setCurrentIndex(nextQuestion);
-
-    } else {
-
-      // TOTAL SCORE AFTER LAST ANSWER
-      const finalScore =
-        selectedAnswer === questions[currentIndex].answer
-          ? score
-          : score;
-
-      // EASY LEVEL
-      if (currentDifficulty === "easy") {
-
-        if (finalScore >= 3) {
-
-          setUnlockedLevels((prev) => ({
-            ...prev,
-            medium: true,
-          }));
-
-          setShowLevelComplete(true);
-
-        } else {
-
-          setShowLevelFailed(true);
-        }
-      }
-
-      // MEDIUM LEVEL
-      else if (currentDifficulty === "medium") {
-
-        if (finalScore >= 8) {
-
-          setUnlockedLevels((prev) => ({
-            ...prev,
-            hard: true,
-          }));
-
-          setShowLevelComplete(true);
-
-        } else {
-
-          setShowLevelFailed(true);
-        }
-      }
-
-      // HARD LEVEL
-      else if (currentDifficulty === "hard") {
-
-        if (finalScore >= 12) {
-
-          setShowResult(true);
-
-        } else {
-
-          setShowLevelFailed(true);
-        }
-      }
+    // MOVE TO NEXT QUESTION
+    if (!isLastQuestion) {
+      setCurrentIndex((prev) => prev + 1);
+      return;
     }
-    };
 
+    // FINAL SCORE (SAFE)
+    const finalScore = score;
 
-  const moveToNextLevel = () => {
-
-    // EASY -> MEDIUM
+    // LEVEL LOGIC
     if (currentDifficulty === "easy") {
-
-      setCurrentDifficulty("medium");
-
-      loadQuizData(category, "medium");
+      if (finalScore >= 3) {
+        setUnlockedLevels((prev) => ({ ...prev, "medium" : true }));
+        setShowLevelComplete(true);
+      } else {
+        setShowLevelFailed(true);
+      }
     }
 
-    // MEDIUM -> HARD
     else if (currentDifficulty === "medium") {
-
-      setCurrentDifficulty("hard");
-
-      loadQuizData(category, "hard");
+      if (finalScore >= 8) {
+        setUnlockedLevels((prev) => ({ ...prev, hard: true }));
+        setShowLevelComplete(true);
+      } else {
+        setShowLevelFailed(true);
+      }
     }
 
-    setSelectedAnswer(null);
-
-    setIsAnswered(false);
-
-    // HIDE LEVEL COMPLETE CARD
-    setShowLevelComplete(false);
+    else if (currentDifficulty === "hard") {
+      if (finalScore >= 12) {
+        setShowResult(true);
+      } else {
+        setShowLevelFailed(true);
+      }
+    }
   };
 
+  const moveToNextLevel = () => {
+    const nextLevel =
+      currentDifficulty === "easy"
+        ? "medium"
+        : currentDifficulty === "medium"
+        ? "hard"
+        : "hard";
+
+    setCurrentDifficulty(nextLevel);
+    loadQuizData(category, nextLevel);
+
+    setShowLevelComplete(false);
+    setSelectedAnswer(null);
+    setIsAnswered(false);
+  };
 
   const retryLevel = () => {
-
     setShowLevelFailed(false);
-
-    setSelectedAnswer(null);
-
-    setIsAnswered(false);
-    // RELOAD SAME LEVEL QUESTIONS
     loadQuizData(category, currentDifficulty);
+    setSelectedAnswer(null);
+    setIsAnswered(false);
   };
 
   const restartQuiz = () => {
-    setCurrentIndex(0);
-    setScore(0);
     setShowResult(false);
     setCurrentDifficulty(initialDifficulty);
     loadQuizData(category, initialDifficulty);
@@ -191,6 +139,7 @@ export const useQuiz = (
     showResult,
     loading,
     handleAnswer,
+    handleNextQuestion,
     restartQuiz,
     currentDifficulty,
     moveToNextLevel,
@@ -199,6 +148,5 @@ export const useQuiz = (
     retryLevel,
     selectedAnswer,
     isAnswered,
-    handleNextQuestion,
   };
 };
