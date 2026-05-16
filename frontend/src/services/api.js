@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:4500";
+const BASE_URL = "https://synapse-1-upep.onrender.com";
 
 export const fetchQuestions = async (
   category,
