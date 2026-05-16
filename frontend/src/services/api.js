@@ -1,4 +1,4 @@
-const BASE_URL = "https://synapse-1-upep.onrender.com";
+const BASE_URL = "https://synapse-40yj.onrender.com";
 
 export const fetchQuestions = async (
   category,
