@@ -1,31 +1,35 @@
+
 import React from "react";
 
 const LevelComplete = ({
-  currentDifficulty = "easy",
+  currentDifficulty,
   onNextLevel,
-  onContinue,
 }) => {
   return (
-    <div className="text-center">
+    <div className="result-wrapper">
 
-      <div className="card">
-        🏆
+      <div className="result-card">
+
+        <div className="success-icon">
+          🏆
+        </div>
+
+        <h1 className="success-title">
+          {currentDifficulty.toUpperCase()} Level Passed!
+        </h1>
+
+        <p className="success-text">
+          Great job! You've moved to the next level.
+        </p>
+
+        <button
+          onClick={onNextLevel}
+          className="action-btn"
+        >
+          Continue →
+        </button>
+
       </div>
-
-      <h1 className="level-title">
-        {currentDifficulty.toUpperCase()} Level Passed!
-      </h1>
-
-      <p className="sub-statement">
-        Great job! You've moved to the next level.
-      </p>
-
-      <button
-        onClick={onContinue}
-        className="continue-btn"
-      >
-        Continue →
-      </button>
 
     </div>
   );

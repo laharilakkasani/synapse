@@ -1,30 +1,34 @@
 import React from "react";
 
 const LevelFailed = ({
-  currentDifficulty = "easy",
+  currentDifficulty,
   onRetry,
 }) => {
   return (
-    <div className="text-center">
+    <div className="result-wrapper">
 
-      <div className="card">
-        ❌
+      <div className="result-card">
+
+        <div className="failed-icon">
+          ❌
+        </div>
+
+        <h1 className="failed-title">
+          {currentDifficulty.toUpperCase()} Level Failed
+        </h1>
+
+        <p className="failed-text">
+          Try again to clear this level.
+        </p>
+
+        <button
+          onClick={onRetry}
+          className="action-btn"
+        >
+          Try Again
+        </button>
+
       </div>
-
-      <h1 className="level-title">
-        {currentDifficulty.toUpperCase()} Level Failed
-      </h1>
-
-      <p className="sub-statement">
-        Try again to clear this level.
-      </p>
-
-      <button
-        onClick={onRetry}
-        className="continue-btn"
-      >
-        Try Again
-      </button>
 
     </div>
   );

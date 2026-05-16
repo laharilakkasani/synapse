@@ -10,6 +10,7 @@ import "./quiz.css";
 const Quiz = () => {
   const [category, setCategory] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
+
   const [unlockedLevels, setUnlockedLevels] = useState({
     easy: true,
     medium: false,
@@ -17,15 +18,6 @@ const Quiz = () => {
   });
 
   const [startQuiz, setStartQuiz] = useState(false);
-
-  const categories = [
-    { name: "science", icon: "bi bi-flask" },
-    { name: "history", icon: "bi bi-bank" },
-    { name: "music", icon: "bi bi-music-note-beamed" },
-    { name: "geography", icon: "bi bi-globe" },
-    { name: "film_and_tv", icon: "bi bi-camera-reels" },
-    { name: "general_knowledge", icon: "bi bi-lightbulb" },
-  ];
 
   const {
     questions,
@@ -51,6 +43,23 @@ const Quiz = () => {
     setUnlockedLevels
   );
 
+  const categories = [
+    { name: "science", icon: "bi bi-flask" },
+    { name: "history", icon: "bi bi-bank" },
+    { name: "music", icon: "bi bi-music-note-beamed" },
+    { name: "geography", icon: "bi bi-globe" },
+    { name: "film_and_tv", icon: "bi bi-camera-reels" },
+    { name: "general_knowledge", icon: "bi bi-lightbulb" },
+    { name: "sports", icon: "bi bi-trophy" },
+    { name: "arts_and_literature", icon: "bi bi-pencil" },
+    { name: "society_and_culture", icon: "bi bi-people" },
+    { name: "food_and_drink", icon: "bi bi-cup" },
+
+
+
+
+  ];
+
   /* LOADING */
   if (loading) {
     return (
@@ -61,32 +70,29 @@ const Quiz = () => {
   }
 
   /* LEVEL COMPLETE */
+  /* LEVEL COMPLETE */
   if (showLevelComplete) {
     return (
       <LevelComplete
         currentDifficulty={currentDifficulty}
-        onContinue={moveToNextLevel}
+        onNextLevel={moveToNextLevel}
       />
     );
   }
-
-  /* LEVEL FAILED */
-  if (showLevelFailed) {
-    return (
-      <LevelFailed 
-        currentDifficulty={currentDifficulty}
-        onRetry={retryLevel} 
-      />
-    );
-  }
-
   /* RESULT */
   if (showResult) {
     return (
       <Result
         score={score}
-        total={30} // Cumulative aggregate maximum score across all levels
-        passed={score >= 20} 
+        total={
+          // currentDifficulty === "hard"
+          //   ? 15
+          //   : currentDifficulty === "medium"
+          //   ? 10
+          //   : 5
+          15
+        }
+        passed={score >= 12}
         onRestart={() => {
           setStartQuiz(false);
           restartQuiz();
@@ -97,9 +103,18 @@ const Quiz = () => {
 
   const currentQuestion = questions?.[currentIndex];
 
+  //level failed component
+  if (showLevelFailed) {
+    return <LevelFailed 
+      currentDifficulty={currentDifficulty}
+      onRetry={retryLevel}  />;
+    }
+
   return (
     <div className="quiz-bg">
+
       <div className="container d-flex justify-content-center align-items-center min-vh-100">
+
         <div className="quiz-card">
 
           {/* START SCREEN */}
@@ -111,7 +126,9 @@ const Quiz = () => {
                 Choose category and difficulty
               </p>
 
+              {/* CATEGORY GRID */}
               <div className="category-grid">
+
                 {categories.map((cat) => (
                   <div
                     key={cat.name}
@@ -124,9 +141,12 @@ const Quiz = () => {
                     <p>{cat.name.replaceAll("_", " ")}</p>
                   </div>
                 ))}
+
               </div>
 
+              {/* DIFFICULTY */}
               <div className="difficulty-buttons">
+
                 <button
                   className={`level-btn ${
                     difficulty === "easy" ? "active-easy" : ""
@@ -155,6 +175,7 @@ const Quiz = () => {
                 >
                   Hard
                 </button>
+
               </div>
 
               <button
@@ -167,19 +188,23 @@ const Quiz = () => {
               >
                 Start Quiz →
               </button>
+
             </>
           ) : (
             <>
+              {/* TOP BAR */}
               <div className="top-bar">
-                <span>Level: {currentDifficulty.toUpperCase()}</span>
-                <span>Total Score: {score}</span>
+                <span>Level: {currentDifficulty}</span>
+                <span>Score: {score}</span>
               </div>
 
+              {/* PROGRESS */}
               <ProgressBar
                 current={currentIndex + 1}
                 total={questions.length}
               />
 
+              {/* QUESTION */}
               <QuestionCard
                 data={questions[currentIndex]}
                 index={currentIndex + 1}
@@ -194,9 +219,12 @@ const Quiz = () => {
           )}
 
         </div>
+
       </div>
+
     </div>
   );
 };
 
 export default Quiz;
+

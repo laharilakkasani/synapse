@@ -47,31 +47,33 @@ const Result = ({
     }
   };
 
-  return (
+return (
 
-    <div className="result-container">
+  <div className="result-wrapper">
+
+    <div className="result-card">
 
       <div className="result-emoji">
         {passed ? "🎉" : "💔"}
       </div>
 
-      <h2 className="result-title">
+      <h2 className="result-main-title">
 
         {passed
-          ? "Level Completed!"
-          : "Level Failed!"}
+          ? "Quiz Completed!"
+          : "Quiz Failed!"}
 
       </h2>
 
       <p className="result-subtitle">
 
         {passed
-          ? "Next level mann!!"
-          : "Try again to unlock next level"}
+          ? "Amazing performance!"
+          : "Try again to improve your score"}
 
       </p>
 
-      <div className="score-card">
+      <div className="score-box">
 
         <h1>
           {score} / {total}
@@ -81,19 +83,14 @@ const Result = ({
 
       </div>
 
-      <div className="d-flex flex-column gap-3">
+      <div className="button-group">
 
         <button
           onClick={handleSubmit}
           disabled={
             isSubmitting || isSubmitted
           }
-          className={`btn submit-btn 
-          ${
-            isSubmitted
-              ? "submitted-btn"
-              : ""
-          }`}
+          className="action-btn"
         >
 
           {isSubmitting
@@ -106,15 +103,19 @@ const Result = ({
 
         <button
           onClick={onRestart}
-          className="btn restart-btn"
+          className="retry-btn"
         >
-          Try Again
+          Play Again
         </button>
 
       </div>
 
     </div>
-  );
+
+  </div>
+);
 };
 
 export default Result;
+
+

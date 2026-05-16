@@ -33,7 +33,6 @@ const QuestionCard = ({
                 ${selectedOption && isCorrect ? "correct" : ""}
                 ${selectedOption && isSelected && !isCorrect ? "wrong" : ""}
               `}
-              disabled={!!selectedOption} // Prevents changing answer after selecting
             >
               {option}
             </button>
@@ -42,12 +41,8 @@ const QuestionCard = ({
       </div>
 
       <div className="nav-buttons">
-        {/* FIX: Removed disabled status on last question so users can submit and see results */}
-        <button 
-          onClick={onNext} 
-          disabled={!selectedOption} // User must pick an answer before moving on
-        >
-          {index === total ? "Finish Level" : "Next"}
+        <button onClick={onNext} disabled={!selectedOption}>
+          Next
         </button>
       </div>
     </div>

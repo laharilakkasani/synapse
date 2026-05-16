@@ -11,33 +11,25 @@ export const useQuiz = (
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [score, setScore] = useState(0);
+  const [levelScore, setLevelScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const [currentDifficulty, setCurrentDifficulty] = useState(
-    initialDifficulty || "easy"
-  );
-
+  const [currentDifficulty, setCurrentDifficulty] = useState(initialDifficulty || "easy");
   const [showLevelComplete, setShowLevelComplete] = useState(false);
   const [showLevelFailed, setShowLevelFailed] = useState(false);
-
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
 
-  // 📦 Load questions
-  const loadQuizData = async (cat, diff, isRetryOrRestart = false) => {
+  const loadQuizData = async (cat, diff) => {
     setLoading(true);
     try {
       const data = await fetchQuestions(cat, diff);
       setQuestions(data || []);
       setCurrentIndex(0);
+      // setScore(0);
+      setLevelScore(0);
       setSelectedAnswer(null);
       setIsAnswered(false);
-      
-      // ✅ Fixed case sensitivity: resets score only on clean restarts or retries
-      if (isRetryOrRestart) {
-        setScore(0);
-      }
     } catch (error) {
       console.error("Quiz load error:", error);
       setQuestions([]);
@@ -46,15 +38,13 @@ export const useQuiz = (
     }
   };
 
-  // 🚀 Start quiz
   useEffect(() => {
     if (startQuiz && category) {
       setCurrentDifficulty(initialDifficulty);
-      loadQuizData(category, initialDifficulty, true);
+      loadQuizData(category, initialDifficulty);
     }
   }, [startQuiz, category, initialDifficulty]);
 
-  // ✅ Answer handling
   const handleAnswer = (selectedOption) => {
     if (isAnswered) return;
 
@@ -62,89 +52,103 @@ export const useQuiz = (
     setIsAnswered(true);
 
     const currentQuestion = questions[currentIndex];
-    const isCorrect = selectedOption === currentQuestion?.answer;
+    const isCorrect =
+      selectedOption === currentQuestion?.answer;
 
     if (isCorrect) {
-      setScore((prev) => prev + 1);
+      // TOTAL SCORE
+      // setScore((prev) => prev + 1);
+
+      // CURRENT LEVEL SCORE
+      // setLevelScore((prev) => prev + 1);
+
+      setLevelScore(levelScore + 1);
     }
   };
 
-  // 👉 Move questions
   const handleNextQuestion = () => {
     if (!questions.length) return;
 
     const isLastQuestion = currentIndex === questions.length - 1;
 
+    setSelectedAnswer(null);
+    setIsAnswered(false);
+
+    // MOVE TO NEXT QUESTION
     if (!isLastQuestion) {
-      setSelectedAnswer(null);
-      setIsAnswered(false);
       setCurrentIndex((prev) => prev + 1);
       return;
     }
 
-    // Capture precise live score state mapping
-    const currentQuestion = questions[currentIndex];
-    const lastAnswerWasCorrect = selectedAnswer === currentQuestion?.answer;
-    const finalScore = lastAnswerWasCorrect ? score + 1 : score;
+    // FINAL SCORE (SAFE)
+    const finalScore = levelScore;
 
-    setSelectedAnswer(null);
-    setIsAnswered(false);
-
-    // LEVEL PROGRESSION CHECKS
+    // LEVEL LOGIC
     if (currentDifficulty === "easy") {
-      if (finalScore >= 3) { 
-        setUnlockedLevels((prev) => ({ ...prev, medium: true }));
+      if (finalScore >= 3) {
+        setScore((prev) => prev + finalScore);
+        setUnlockedLevels((prev) => ({ ...prev, "medium" : true }));
         setShowLevelComplete(true);
       } else {
         setShowLevelFailed(true);
       }
-      return;
     }
 
-    if (currentDifficulty === "medium") {
-      if (finalScore >= 8) { 
+    else if (currentDifficulty === "medium") {
+      if (finalScore >= 3) {
+        setScore((prev) => prev + finalScore);
         setUnlockedLevels((prev) => ({ ...prev, hard: true }));
         setShowLevelComplete(true);
       } else {
         setShowLevelFailed(true);
       }
-      return;
     }
 
-    if (currentDifficulty === "hard") {
-      if (finalScore >= 12) {
+    else if (currentDifficulty === "hard") {
+      if (finalScore >= 3) {
+        setScore((prev) => prev + finalScore);
         setShowResult(true);
       } else {
         setShowLevelFailed(true);
       }
-      return;
     }
   };
 
-  // ⏭ Next level
   const moveToNextLevel = () => {
     const nextLevel =
       currentDifficulty === "easy"
         ? "medium"
+        : currentDifficulty === "medium"
+        ? "hard"
         : "hard";
 
     setCurrentDifficulty(nextLevel);
     setShowLevelComplete(false);
-    // Passing false preserves the accumulated score from previous tier!
-    loadQuizData(category, nextLevel, false);
+    setSelectedAnswer(null);
+    setIsAnswered(false);
+    setLevelScore(0);
+    loadQuizData(category, nextLevel);
+
   };
 
-  // 🔁 Retry level
   const retryLevel = () => {
     setShowLevelFailed(false);
-    loadQuizData(category, currentDifficulty, true);
+    setSelectedAnswer(null);
+    setIsAnswered(false);
+    setLevelScore(0);
+    loadQuizData(category, currentDifficulty);
+    
   };
 
-  // 🔄 Restart quiz
   const restartQuiz = () => {
+    setScore(0);
+    setLevelScore(0);
     setShowResult(false);
     setCurrentDifficulty(initialDifficulty);
-    loadQuizData(category, initialDifficulty, true);
+    setSelectedAnswer(null);
+    setIsAnswered(false);
+    loadQuizData(category, initialDifficulty);
+    
   };
 
   return {
@@ -165,3 +169,4 @@ export const useQuiz = (
     isAnswered,
   };
 };
+
