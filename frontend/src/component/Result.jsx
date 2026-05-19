@@ -7,6 +7,7 @@ const Result = ({
   total,
   passed,
   onRestart,
+  onSubmitScore,
 }) => {
 
   const [isSubmitting, setIsSubmitting] =
@@ -23,10 +24,9 @@ const Result = ({
 
     try {
 
-      const data = await submitResult(
-        score,
-        total
-      );
+      if(onSubmitScore) {
+
+        await onSubmitScore(score, total, passed)};
 
       console.log("Success:", data);
 

@@ -4,6 +4,7 @@ import React from "react";
 const LevelComplete = ({
   currentDifficulty,
   onNextLevel,
+  score,
 }) => {
   return (
     <div className="result-wrapper">
@@ -17,6 +18,10 @@ const LevelComplete = ({
         <h1 className="success-title">
           {currentDifficulty.toUpperCase()} Level Passed!
         </h1>
+
+        <h3 className="success-score">
+          Score: {score}
+        </h3>
 
         <p className="success-text">
           Great job! You've moved to the next level.

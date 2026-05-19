@@ -7,7 +7,9 @@ import LevelFailed from "./LevelFailed";
 import LevelComplete from "./LevelComplete";
 import "./quiz.css";
 
-const Quiz = () => {
+const Quiz = (
+  onSubmitscore
+) => {
   const [category, setCategory] = useState("");
   const [difficulty, setDifficulty] = useState("easy");
 
@@ -76,6 +78,7 @@ const Quiz = () => {
       <LevelComplete
         currentDifficulty={currentDifficulty}
         onNextLevel={moveToNextLevel}
+        score={score}
       />
     );
   }
@@ -97,6 +100,7 @@ const Quiz = () => {
           setStartQuiz(false);
           restartQuiz();
         }}
+        onSubmitScore={onSubmitscore}
       />
     );
   }
@@ -107,7 +111,9 @@ const Quiz = () => {
   if (showLevelFailed) {
     return <LevelFailed 
       currentDifficulty={currentDifficulty}
-      onRetry={retryLevel}  />;
+      onRetry={retryLevel} 
+      score={score}
+       />;
     }
 
   return (
@@ -195,7 +201,6 @@ const Quiz = () => {
               {/* TOP BAR */}
               <div className="top-bar">
                 <span>Level: {currentDifficulty}</span>
-                <span>Score: {score}</span>
               </div>
 
               {/* PROGRESS */}

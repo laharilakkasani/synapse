@@ -17,6 +17,10 @@ const LevelFailed = ({
           {currentDifficulty.toUpperCase()} Level Failed
         </h1>
 
+        <h3 className="success-score">
+          Score: {score}
+        </h3>
+
         <p className="failed-text">
           Try again to clear this level.
         </p>
