@@ -2,6 +2,7 @@ import React from "react";
 
 const LevelFailed = ({
   currentDifficulty,
+  score,
   onRetry,
 }) => {
   return (
@@ -14,11 +15,11 @@ const LevelFailed = ({
         </div>
 
         <h1 className="failed-title">
-          {currentDifficulty.toUpperCase()} Level Failed
+          {currentDifficulty ? currentDifficulty.toUpperCase() : "LEVEL"} Level Failed
         </h1>
-
+        
         <h3 className="success-score">
-          Score: {score}
+          Score: {score ?? 0}
         </h3>
 
         <p className="failed-text">
