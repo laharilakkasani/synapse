@@ -31,7 +31,7 @@ export const fetchQuestions = async (
     }));
   } catch (error) {
     console.error(
-      "Error in fetchQuestions:",
+      "Errors in fetchQuestions:",
       error
     );
 
